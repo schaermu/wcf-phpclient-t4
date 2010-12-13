@@ -1,0 +1,40 @@
+ABSTRACT
+==================
+This project demonstrates the automated creation of PHP client proxy classes for WCF. The example contains both service contract and data contract classes for php.
+
+FEATURES
+==================
+	- Base class to provide generic features (like SOAP_Client instantiation or error-handling)
+	- Low-level SOAP_Client calls for maximum control about the data interactions
+	- DataContracts are generated with doc-comments to provide C# type information
+	- PHP classes are generated using default ServiceModel attributes
+
+DETAILS
+==================
+In order to provide the necessary interoperability for interacting with php clients from WCF, there are some caveats:
+
+	- You are restricted to basicHttpBinding's
+	- The generated WSDL has to be flattened, this is done using the WCFExtras project (see app.config)
+	- Make sure you provide namespaces for the following elements:
+		- Each ServiceBehavior attribute has to have a namespace (set on service implementation)
+		- Each endpoint configuration entry has to have the matching ServiceBehavior namespace
+
+Since there is no way to test these php templates in a solution-integrated way, there are no tests provided.
+The WCF implementations are just examples to demonstrate the T4 templates, they should be adopted to your own WCF project.
+
+USAGE
+==================
+To use these templates in your own projects, follow these steps:
+
+	1) Copy ServiceContracts.tt and DataContracts.tt from the WcfT4Client.PhpGenerator project to your own project.
+
+	2) Add references to your service contract and data contract projects in the project containing the T4 templates.
+
+	3) Modify the options dictionary in both T4 templates to match your setup.
+
+	4) Enjoy.
+
+CREDITS
+==================
+	- damieng for creating the awesome T4 extension "Manager.ttinclude" [http://damieng.com/blog/2009/11/06/multiple-outputs-from-t4-made-easy-revisited]
+	- WCFExtras project for fixing some of the most annoying issues with wcf & interoperability [http://wcfextras.codeplex.com/]

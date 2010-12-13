@@ -1,0 +1,172 @@
+﻿<#@ template language="C#" hostspecific="True" debug="true" #>
+<#@ output extension=".log" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.ServiceModel.dll" #>
+<#@ import namespace="System.ServiceModel" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Reflection" #>
+<#@ include file="Manager.ttinclude" #>
+
+<#
+
+// set template configuration
+var options = new Dictionary<string, object>()
+{
+	// url part for service url
+	{ "serviceLocation", "http://localhost:9999" },
+	// path to assembly containing service contracts
+	// TODO: Figure out a way to determine this path configuration in-dependant
+	{ "serviceAssemblyPath", Host.ResolvePath("") + @"\bin\Debug\WcfT4Client.Service.dll" },
+	// ether to enable wsdl caching or not
+	{ "enableWsdlCaching", true },
+	// configure generated base class
+	{ "classConfig", new Dictionary<string, object>
+		{
+			// name of parent class (null if not applicable)
+			{ "parentClassName", null },
+			// content of constructor (null if not applicable)
+			{ "constructorContent", null }
+		}
+	}
+};
+
+Manager manager = Manager.Create(Host, GenerationEnvironment);
+// render base class
+manager.StartNewFile("ServiceClientBase.php");
+
+string extendPart = string.Empty;
+string parentClassName = (string)((Dictionary<string, object>)options["classConfig"])["parentClassName"];
+if (!string.IsNullOrEmpty(parentClassName))
+	extendPart = " extends " + parentClassName;
+
+string constructorContent = (string)((Dictionary<string, object>)options["classConfig"])["constructorContent"];
+#>
+<?php
+
+class ServiceClientBase<#= extendPart #>
+{
+	protected $_soapClient;
+
+	public $hasError;
+	public $errorMessage;
+	
+	private $endpointUrl = "<#= (string)options["serviceLocation"] #>";
+	
+	function ServiceClientBase()
+	{
+		<# if (!string.IsNullOrEmpty(constructorContent)) #><#= constructorContent #>
+	}
+	
+	public function InitSoapClient($endpointName)
+	{
+		$wsdlUrl = $this->endpointUrl . "/" . $endpointName . "?wsdl";
+		$serviceUrl = str_replace("?wsdl", "", $wsdlUrl);
+		$this->_soapClient = new SoapClient($wsdlUrl, array(
+			'location' => $serviceUrl,
+			'trace' => true,
+			'soap_version' => SOAP_1_1
+			'cache_wsdl' => <#
+if (!(bool)options["enableWsdlCaching"])
+{
+	#>WSDL_CACHE_NONE<#
+}
+else
+{
+	#>WSDL_CACHE_MEMORY<#
+}#>));
+	}
+			
+	public function ExceptionHandler($ex) {
+		$this->hasError = true;
+		$this->errorMessage = $ex->getMessage();
+	}
+
+	public function GetLastRequest() {
+		return $this->_soapClient->__getLastRequest();
+	}
+		
+	public function GetLastResponse() {
+		return $this->_soapClient->__getLastResponse();
+	}
+}
+
+?><#
+
+manager.EndBlock();
+
+// read all available services
+Assembly svcAsm = Assembly.Load(System.IO.File.ReadAllBytes(Host.ResolveAssemblyReference((string)options["serviceAssemblyPath"])));
+Assembly svcMdlAsm = Assembly.Load("System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+
+List<Type> serviceTypes = new List<Type>();
+foreach (Type t in svcAsm.GetTypes())
+{
+    Type serviceAttribute = svcMdlAsm.GetType("System.ServiceModel.ServiceContractAttribute");
+    object[] attr = t.GetCustomAttributes(serviceAttribute, false);
+	if (attr.Length > 0)
+		serviceTypes.Add(t);
+}
+
+foreach (Type svcType in serviceTypes)
+{
+	// cleanup class name
+	int substrIdx = 0;
+	if (svcType.Name.Substring(0, 1).ToUpper() == "I")
+		substrIdx = 1;
+	string className = svcType.Name.Substring(substrIdx) + "Client";
+	manager.StartNewFile(className + ".php");
+#>
+<?php
+
+class <#= className #> extends ServiceClientBase {
+
+	public function <#= className #>() {
+		parent::ServiceClientBase();
+		$this->InitSoapClient("<#= svcType.Name #>");
+	}
+	<#
+	
+	// loop all operation contract attributed members
+	List<MethodInfo> pMethods = svcType.GetMethods().Where(m => m.IsPublic && !m.IsConstructor).ToList();
+	foreach (MethodInfo m in pMethods)
+	{
+		string argList = string.Empty;
+		ParameterInfo[] paramInfos =  m.GetParameters();
+		foreach (ParameterInfo entry in paramInfos)
+			argList += "$" + entry.Name + ", ";
+		
+		if (argList.Length > 2)
+			argList = argList.Substring(0, argList.Length - 2);
+	#>
+
+	public function <#= m.Name #>(<#= argList #>) {
+		$soapMethod = "<#= m.Name #>";
+		$soapParameters = array(
+	<#
+		int i = 0;
+		// build soap parameter array
+		string sep = ",";
+		foreach (ParameterInfo param in paramInfos)
+		{
+			if ((i+1) == paramInfos.Length)
+				sep = string.Empty;
+		#>
+		'<#= param.Name #>' => $<#= param.Name + sep #>
+	<# 
+			i++;
+		}
+		#>
+	);
+		try {
+			$res = $this->_soapClient->__soapCall($soapMethod, array('request' => $soapParameters), null);
+			return $res-><#= m.Name #>Result;
+		} catch (Exception $ex) {
+			$this->ExceptionHandler($ex);
+		}
+	}	
+	<#
+}#>
+}
+?><# manager.EndBlock();
+}
+manager.Process(true); #>

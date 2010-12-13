@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.PhpGenerator", "WcfT4Client.PhpGenerator\WcfT4Client.PhpGenerator.csproj", "{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Service", "WcfT4Client.Service\WcfT4Client.Service.csproj", "{6BF8228D-FC99-463F-889B-9E546BA5A592}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Common", "WcfT4Client.Common\WcfT4Client.Common.csproj", "{070F7BFE-3235-463C-B741-91624FF510FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Data", "WcfT4Client.Data\WcfT4Client.Data.csproj", "{B9BDFB6D-F048-4160-9671-C69648AA92FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0340E9E-87E0-4F46-A949-6939C0E87FF9}"
+	ProjectSection(SolutionItems) = preProject
+		README = README
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Release|Any CPU.Build.0 = Release|Any CPU
+		{070F7BFE-3235-463C-B741-91624FF510FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{070F7BFE-3235-463C-B741-91624FF510FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{070F7BFE-3235-463C-B741-91624FF510FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{070F7BFE-3235-463C-B741-91624FF510FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

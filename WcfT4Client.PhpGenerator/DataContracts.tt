@@ -1,0 +1,65 @@
+﻿<#@ template language="C#" hostspecific="True" debug="true" #>
+<#@ output extension=".log" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.ServiceModel.dll" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="System.ServiceModel" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="EnvDTE" #>
+<#@ include file="Manager.ttinclude" #>
+
+<#
+// set template configuration
+var options = new Dictionary<string, string>()
+{
+	// path to assembly containing data contracts
+	// TODO: Figure out a way to determine this path configuration in-dependant
+	{ "dataContractAssembly", Host.ResolvePath("") + @"\bin\Debug\WcfT4Client.Data.dll" }
+};
+
+Assembly dcAsm = Assembly.Load(System.IO.File.ReadAllBytes(Host.ResolveAssemblyReference(options["dataContractAssembly"])));
+Assembly svcMdlAsm = Assembly.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+
+List<Type> dataContractTypes = new List<Type>();
+foreach (Type t in dcAsm.GetTypes())
+{
+    Type dataContractAttr = svcMdlAsm.GetType("System.Runtime.Serialization.DataContractAttribute");
+    object[] attr = t.GetCustomAttributes(dataContractAttr, false);
+	if (attr.Length > 0)
+		dataContractTypes.Add(t);
+}
+
+Manager manager = Manager.Create(Host, GenerationEnvironment);
+Type dataMemberAttr = svcMdlAsm.GetType("System.Runtime.Serialization.DataMemberAttribute");
+foreach (Type dataType in dataContractTypes)
+{
+	string className = dataType.Name;
+	manager.StartNewFile(className + ".php");
+#>
+<?php
+
+class <#= className #> {
+
+<#
+	List<PropertyInfo> dataMembers =
+        dataType.GetProperties().Where(
+            p => p.GetCustomAttributes(dataMemberAttr, false).Length > 0).ToList();
+    foreach (PropertyInfo prop in dataMembers)
+    {
+#>
+	/**
+	 * @var <#= prop.PropertyType.Name #>
+   */
+	public $<#= prop.Name #>;
+
+<#}
+#>
+}
+
+?>
+<#
+	manager.EndBlock();
+}
+manager.Process(true);
+#>
