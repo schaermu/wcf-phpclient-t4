@@ -51,13 +51,11 @@
     <Compile Include="CustomerService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WcfT4Client.Common\WcfT4Client.Common.csproj">
-      <Project>{070F7BFE-3235-463C-B741-91624FF510FB}</Project>
-      <Name>WcfT4Client.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WcfT4Client.Data\WcfT4Client.Data.csproj">
       <Project>{B9BDFB6D-F048-4160-9671-C69648AA92FC}</Project>
       <Name>WcfT4Client.Data</Name>

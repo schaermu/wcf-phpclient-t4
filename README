@@ -5,7 +5,7 @@ This project demonstrates the automated creation of PHP client proxy classes for
 FEATURES
 ==================
 - Base class to provide generic features (like SOAP_Client instantiation or error-handling)
-- Low-level SOAP_Client calls for maximum control about the data interactions
+- Low-level SOAP_Client calls for maximum control about the data interactionsWcfT4Client.Service
 - DataContracts are generated with doc-comments to provide C# type information
 - PHP classes are generated using default ServiceModel attributes
 
@@ -17,7 +17,7 @@ In order to provide the necessary interoperability for interacting with php clie
 - The generated WSDL has to be flattened, this is done using the WCFExtras project (see app.config)
 - Make sure you provide namespaces for the following elements:
 	- Each ServiceBehavior attribute has to have a namespace (set on service implementation)
-	- Each endpoint configuration entry has to have the matching ServiceBehavior namespace
+	- Each endpoint configuration entry has to have the matching ServiceBehavior namespace on "bindingNamespace" attribute
 
 Since there is no way to test these php templates in a solution-integrated way, there are no tests provided.
 The WCF implementations are just examples to demonstrate the T4 templates, they should be adopted to your own WCF project.
@@ -26,10 +26,14 @@ USAGE
 ==================
 To use these templates in your own projects, follow these steps:
 
-1) Copy ServiceContracts.tt and DataContracts.tt from the WcfT4Client.PhpGenerator project to your own project.
-2) Add references to your service contract and data contract projects in the project containing the T4 templates.
-3) Modify the options dictionary in both T4 templates to match your setup.
-4) Enjoy.
+1) Copy all T4 templates from the WcfT4Client.PhpGenerator project to your own project.
+2) Add references to System.ServiceModel, your service contract and data contract projects in the project containing the T4 templates.
+3) Modify the solution base path in GlobalSettings.ttinclude.
+4) Modify the options dictionary in both contract T4 templates to match your setup.
+5) Modify your service project according the example to implement WSDL flattening
+	5.1) Add a reference to the WCFExtras assembly
+	5.2) Change your configuration file according to the comments in WcfT4Client.Service/App.config
+6) Enjoy.
 
 CREDITS
 ==================

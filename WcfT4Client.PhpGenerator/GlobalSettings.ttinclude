@@ -1,0 +1,7 @@
+﻿<#@ assembly name="System.Core"
+#><#@ import namespace="System"
+#><#+
+
+string SOLUTION_BASE_PATH = @"C:\Users\schaermu\Documents\workwork\99_privat\wcf-phpclient-t4";
+
+#>

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" hostspecific="True" debug="true" #>
+﻿<#@ template language="C#v3.5" hostspecific="True" debug="true" #>
 <#@ output extension=".log" #>
 <#@ assembly name="System" #>
 <#@ assembly name="System.ServiceModel.dll" #>
@@ -8,6 +8,7 @@
 <#@ import namespace="System.Reflection" #>
 <#@ import namespace="EnvDTE" #>
 <#@ include file="Manager.ttinclude" #>
+<#@ include file="GlobalSettings.ttinclude" #>
 
 <#
 // set template configuration
@@ -15,7 +16,7 @@ var options = new Dictionary<string, string>()
 {
 	// path to assembly containing data contracts
 	// TODO: Figure out a way to determine this path configuration in-dependant
-	{ "dataContractAssembly", Host.ResolvePath("") + @"\bin\Debug\WcfT4Client.Data.dll" }
+	{ "dataContractAssembly", SOLUTION_BASE_PATH + @"\WcfT4Client.Data\bin\Debug\WcfT4Client.Data.dll" }
 };
 
 Assembly dcAsm = Assembly.Load(System.IO.File.ReadAllBytes(Host.ResolveAssemblyReference(options["dataContractAssembly"])));

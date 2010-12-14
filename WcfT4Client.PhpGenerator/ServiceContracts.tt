@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" hostspecific="True" debug="true" #>
+﻿<#@ template language="C#v3.5" hostspecific="True" debug="true" #>
 <#@ output extension=".log" #>
 <#@ assembly name="System" #>
 <#@ assembly name="System.ServiceModel.dll" #>
@@ -6,6 +6,7 @@
 <#@ import namespace="System" #>
 <#@ import namespace="System.Reflection" #>
 <#@ include file="Manager.ttinclude" #>
+<#@ include file="GlobalSettings.ttinclude" #>
 
 <#
 
@@ -16,7 +17,7 @@ var options = new Dictionary<string, object>()
 	{ "serviceLocation", "http://localhost:9999" },
 	// path to assembly containing service contracts
 	// TODO: Figure out a way to determine this path configuration in-dependant
-	{ "serviceAssemblyPath", Host.ResolvePath("") + @"\bin\Debug\WcfT4Client.Service.dll" },
+	{ "serviceAssemblyPath", SOLUTION_BASE_PATH + @"\WcfT4Client.Service\bin\Debug\WcfT4Client.Service.dll" },
 	// ether to enable wsdl caching or not
 	{ "enableWsdlCaching", true },
 	// configure generated base class

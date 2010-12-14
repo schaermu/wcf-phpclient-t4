@@ -1,11 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.PhpGenerator", "WcfT4Client.PhpGenerator\WcfT4Client.PhpGenerator.csproj", "{FEFA3D1C-83E4-474F-AA71-A105F28A0A97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Service", "WcfT4Client.Service\WcfT4Client.Service.csproj", "{6BF8228D-FC99-463F-889B-9E546BA5A592}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Common", "WcfT4Client.Common\WcfT4Client.Common.csproj", "{070F7BFE-3235-463C-B741-91624FF510FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfT4Client.Data", "WcfT4Client.Data\WcfT4Client.Data.csproj", "{B9BDFB6D-F048-4160-9671-C69648AA92FC}"
 EndProject
@@ -28,10 +26,6 @@ Global
 		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BF8228D-FC99-463F-889B-9E546BA5A592}.Release|Any CPU.Build.0 = Release|Any CPU
-		{070F7BFE-3235-463C-B741-91624FF510FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{070F7BFE-3235-463C-B741-91624FF510FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{070F7BFE-3235-463C-B741-91624FF510FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{070F7BFE-3235-463C-B741-91624FF510FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9BDFB6D-F048-4160-9671-C69648AA92FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
