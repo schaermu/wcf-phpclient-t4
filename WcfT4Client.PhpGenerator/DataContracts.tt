@@ -12,14 +12,16 @@
 
 <#
 // set template configuration
-var options = new Dictionary<string, string>()
+var options = new Dictionary<string, object>()
 {
 	// path to assembly containing data contracts
 	// TODO: Figure out a way to determine this path configuration in-dependant
-	{ "dataContractAssembly", SOLUTION_BASE_PATH + @"\WcfT4Client.Data\bin\Debug\WcfT4Client.Data.dll" }
+	{ "dataContractAssembly", SOLUTION_BASE_PATH + @"\WcfT4Client.Data\bin\Debug\WcfT4Client.Data.dll" },
+	// set this flag to true if you want to generate a single file containing all datacontract classes
+	{ "generateSinglePhpFile", false }
 };
 
-Assembly dcAsm = Assembly.Load(System.IO.File.ReadAllBytes(Host.ResolveAssemblyReference(options["dataContractAssembly"])));
+Assembly dcAsm = Assembly.Load(System.IO.File.ReadAllBytes(Host.ResolveAssemblyReference(options["dataContractAssembly"].ToString())));
 Assembly svcMdlAsm = Assembly.Load("System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 
 List<Type> dataContractTypes = new List<Type>();
@@ -33,33 +35,94 @@ foreach (Type t in dcAsm.GetTypes())
 
 Manager manager = Manager.Create(Host, GenerationEnvironment);
 Type dataMemberAttr = svcMdlAsm.GetType("System.Runtime.Serialization.DataMemberAttribute");
-foreach (Type dataType in dataContractTypes)
+Type enumMemberAttr = svcMdlAsm.GetType("System.Runtime.Serialization.EnumMemberAttribute");
+bool renderSingleFile = (bool)options["generateSinglePhpFile"];
+if (renderSingleFile)
 {
-	string className = dataType.Name;
-	manager.StartNewFile(className + ".php");
+	manager.StartNewFile("DataContracts.php");
 #>
 <?php
 
-class <#= className #> {
+<#
+}
+foreach (Type dataType in dataContractTypes)
+{
+	string className = dataType.Name;
+	List<PropertyInfo> dataMembers =
+			dataType.GetProperties().Where(
+				p => p.GetCustomAttributes(dataMemberAttr, false).Length > 0).ToList();
+	if (dataType.IsEnum)
+	{
+		if (dataType.GetEnumNames().Length == 0)
+			continue;
+	}
+	else
+		if (dataMembers.Count == 0)
+			continue;
+	
+	if (!renderSingleFile)
+	{
+		manager.StartNewFile(className + ".php");
+#>
+<?php
 
 <#
-	List<PropertyInfo> dataMembers =
-        dataType.GetProperties().Where(
-            p => p.GetCustomAttributes(dataMemberAttr, false).Length > 0).ToList();
-    foreach (PropertyInfo prop in dataMembers)
-    {
+	}
 #>
-	/**
-	 * @var <#= prop.PropertyType.Name #>
+// START OF CLASS <#= className #>
+class <#= className #> {
+<#
+	// check if we render an enum type
+	if (dataType.IsEnum)
+	{
+		string[] enumNames = dataType.GetEnumNames();
+		Array values = dataType.GetEnumValues();
+		for (int i = 0; i < enumNames.Length; i++)
+		{
+#>	public $<#= enumNames[i].ToUpper() #> = <#= (int)values.GetValue(i) #>;
+<#
+		}
+	}
+	else
+	{		
+		foreach (PropertyInfo prop in dataMembers)
+		{
+			string typeValue = prop.PropertyType.Name;
+			if (prop.PropertyType.IsGenericType)
+			{
+				// get generic type definition
+				Type[] genericType = prop.PropertyType.GetGenericArguments();
+				typeValue = prop.PropertyType.Name + "<";
+				foreach (Type gType in genericType)
+				{
+					typeValue += gType.Name;
+				}
+				typeValue += ">";
+			}
+#>	
+  /**
+	 * @var <#= typeValue #>
    */
 	public $<#= prop.Name #>;
-
-<#}
-#>
-}
-
-?>
 <#
+		}
+	}
+#>}
+// END OF CLASS <#= className #>
+
+<#
+	if (!renderSingleFile)
+	{
+		#>
+?>
+		<#
+		manager.EndBlock();
+	}
+}
+if (renderSingleFile)
+{
+#>
+?><#
 	manager.EndBlock();
 }
 manager.Process(true);
